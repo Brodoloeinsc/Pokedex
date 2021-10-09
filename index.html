@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokedex</title>
+    <script src="app.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="main">
+        <h2>Pokedex</h2>
+        <br>
+        <input type="text" name="quantidade" id="quantidade" placeholder="Insira a quantidade de pokemons...">
+        <div class="pokemon-boxes">
+        </div>
+
+    </div>
+    <script>
+        var quantidade = document.getElementById('quantidade')
+        quantidade.addEventListener('keyup',()=>{
+            pegaPokemons(quantidade.value)
+        })
+
+        pegaPokemons(12)
+        function pegaPokemons(quantidade){
+            fetch('https://pokeapi.co/api/v2/pokemon?limit='+quantidade)
+            .then(response => response.json())
+            .then(allpokemon => {
+                pokemon = [];
+
+                allpokemon.results.map((val)=>{
+                    
+
+                    fetch(val.url)
+                    .then(response => response.json())
+                    .then(pokemonSingle => {
+                        pokemon.push({nome: val.name, imagem: pokemonSingle.sprites.front_default})
+
+                        if(pokemon.length == quantidade){
+                            //Finalizamos nossas requisições
+
+                            let poke_boxes = document.querySelector('.pokemon-boxes')
+                            poke_boxes.innerHTML="";
+
+                            pokemon.map((val)=>{
+                                poke_boxes.innerHTML+=`
+                                    <div class="pokemon-box">
+                                    <img src="`+val.imagem+`">
+                                    <p>`+val.nome+`</p>
+                                    </div>
+                                `
+                                /*
+                                <div class="pokemon-box">
+                                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/132.png">
+                                <p>Ditto</p>
+                                </div>
+                                */
+                            })
+                        }
+
+                    })
+                })
+
+                pokemon.map((val)=>{
+                    console.log(val.nome)
+                })
+            })
+        }
+    </script>
+</body>
+</html>
